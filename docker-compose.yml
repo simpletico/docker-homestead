@@ -1,0 +1,35 @@
+version: '2'
+services:
+    wl3-3.0:
+        image: juajim/myhomestead
+        #ports:
+        #    - "8080:80" # web
+        #    - "2202:22" # ssh
+        #    - "35728:35729" # live reload
+        #    - "9878:9876" # karma server
+        volumes:
+            - /home/andy/.composer:/home/homestead/.composer # composer caching
+            - /home/andy/.gitconfig:/home/homestead/.gitconfig # Git configuration ( access alias && config )
+            - /home/andy/.ssh:/home/homestead/.ssh # Ssh keys for easy deployment inside the container
+            - /home/andy/work/fh/apps:/apps # all apps
+            - /home/andy/work/fh/apps/volumes/nginx/sites-available:/etc/nginx/sites-available # nginx sites ( in case you recreate the container )
+            - /home/andy/work/fh/apps/volumes/nginx/sites-enabled:/etc/nginx/sites-enabled # nginx sites ( in case you recreate the container )
+            - /etc/localtime:/etc/localtime:ro # composer caching
+            - /tmp/.X11-unix:/tmp.X11-unix
+        #env_file: 
+        #    - /home/andy/work/fh/apps/enviroment_vars
+        #environment:
+        #    - DISPLAY=unix$DISPLAY \ # pass the display
+        #external_links:
+        #    - homesteaddocker_mariadb_1:mariadb
+        #links:
+        #     - mariadb
+    mariadb:
+        image: tutum/mariadb
+        ports:
+            - "33060:3306"
+        environment:
+            MARIADB_USER: admin # cannot be changed ( for info. only )
+            MARIADB_PASS: root
+        volumes:
+            - /home/andy/work/fh/apps/volumes/mysql:/var/lib/mysql # database files
