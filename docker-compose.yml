@@ -1,7 +1,8 @@
 version: '2'
 services:
-    wl3-3.0:
-        image: juajim/myhomestead
+    wl3-3.1:
+        image: juajim/homestead-nginx
+        build: ./base-image
         #ports:
         #    - "8080:80" # web
         #    - "2202:22" # ssh
@@ -20,10 +21,11 @@ services:
         #    - /home/andy/work/fh/apps/enviroment_vars
         #environment:
         #    - DISPLAY=unix$DISPLAY \ # pass the display
-        #external_links:
+        external_links:
         #    - homesteaddocker_mariadb_1:mariadb
-        #links:
-        #     - mariadb
+            - selenium
+        links:
+             - mariadb
     mariadb:
         image: tutum/mariadb
         ports:
