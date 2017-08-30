@@ -10,13 +10,13 @@ services:
         #    - "9878:9876" # karma server
         volumes:
             - /home/andy/.composer:/home/homestead/.composer # composer caching
-            - /home/andy/.gitconfig:/home/homestead/.gitconfig # Git configuration ( access alias && config )
-            - /home/andy/.ssh:/home/homestead/.ssh # Ssh keys for easy deployment inside the container
+              #- /home/andy/.gitconfig:/home/homestead/.gitconfig # Git configuration ( access alias && config )
+            - /home/andy/.ssh-copy:/home/homestead/.ssh # Ssh keys for easy deployment inside the container
             - /home/andy/work/fh/apps:/apps # all apps
             - /home/andy/work/fh/apps/volumes/nginx/sites-available:/etc/nginx/sites-available # nginx sites ( in case you recreate the container )
             - /home/andy/work/fh/apps/volumes/nginx/sites-enabled:/etc/nginx/sites-enabled # nginx sites ( in case you recreate the container )
             - /etc/localtime:/etc/localtime:ro # composer caching
-            - /tmp/.X11-unix:/tmp.X11-unix
+              #- /tmp/.X11-unix:/tmp.X11-unix
         #env_file: 
         #    - /home/andy/work/fh/apps/enviroment_vars
         #environment:
@@ -35,3 +35,8 @@ services:
             MARIADB_PASS: root
         volumes:
             - /home/andy/work/fh/apps/volumes/mysql:/var/lib/mysql # database files
+    selenium:
+        image: selenium/standalone-chrome-debug
+        build: ./wl3Selenium
+        ports:
+            -5900:32772
