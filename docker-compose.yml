@@ -1,31 +1,20 @@
-version: '2'
+version: '2.1'
 services:
-    wl3-3.1:
-        image: juajim/homestead-nginx
-        build: ./base-image
-        #ports:
-        #    - "8080:80" # web
-        #    - "2202:22" # ssh
-        #    - "35728:35729" # live reload
-        #    - "9878:9876" # karma server
+    wl3:
+        image: php5.6.31-apache
+        build: ./apache-php
         volumes:
-            - /home/andy/.composer:/home/homestead/.composer # composer caching
-              #- /home/andy/.gitconfig:/home/homestead/.gitconfig # Git configuration ( access alias && config )
-            - /home/andy/.ssh-copy:/home/homestead/.ssh # Ssh keys for easy deployment inside the container
-            - /home/andy/work/fh/apps:/apps # all apps
-            - /home/andy/work/fh/apps/volumes/nginx/sites-available:/etc/nginx/sites-available # nginx sites ( in case you recreate the container )
-            - /home/andy/work/fh/apps/volumes/nginx/sites-enabled:/etc/nginx/sites-enabled # nginx sites ( in case you recreate the container )
+            - /home/andy/work/fh/apps:/var/www/html:z # all apps
+            - /home/andy/work/fh/apps/volumes/apache:/etc/apache2/sites-enabled:z
             - /etc/localtime:/etc/localtime:ro # composer caching
-              #- /tmp/.X11-unix:/tmp.X11-unix
-        #env_file: 
-        #    - /home/andy/work/fh/apps/enviroment_vars
-        #environment:
-        #    - DISPLAY=unix$DISPLAY \ # pass the display
-        external_links:
-        #    - homesteaddocker_mariadb_1:mariadb
-            - selenium_chrome_alone
-        links:
-             - mariadb
+            - /home/andy/.composer:/root/.composer:z # composer caching
+              #- /home/andy/.gitconfig:/root/.gitconfig:z # Git configuration ( access alias && config )
+            - /home/andy/.ssh:/root/.ssh:ro # Ssh keys for easy deployment inside the container
+        environment:
+            XDEBUG_REMOTE_HOST: 172.18.0.1
+        networks:
+            homestead:
+                ipv4_address: 172.18.0.4
     mariadb:
         image: tutum/mariadb
         ports:
@@ -34,4 +23,35 @@ services:
             MARIADB_USER: admin # cannot be changed ( for info. only )
             MARIADB_PASS: root
         volumes:
-            - /home/andy/work/fh/apps/volumes/mysql:/var/lib/mysql # database files
+            - /home/andy/work/fh/apps/volumes/mysql:/var/lib/mysql:z # database files
+        networks:
+            homestead:
+                ipv4_address: 172.18.0.5
+    
+    selenium:
+        image: selenium/standalone-chrome-debug
+        ports:
+            - 5900:5900
+        networks:
+            homestead:
+                ipv4_address: 172.18.0.6
+
+    nodejs:
+        image: "node:6.11"
+        build: ./wl3-nodejs
+        working_dir: /home/node/apps
+        volumes:
+            - /home/andy/work/fh/apps:/home/node/apps:z # all apps
+            - /etc/localtime:/etc/localtime:ro # composer caching
+        environment:
+            - NODE_ENV=development
+        networks:
+            homestead: 
+                ipv4_address: 172.18.0.7
+
+networks:
+    homestead:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 172.18.0.0/24
