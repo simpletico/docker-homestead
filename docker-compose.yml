@@ -23,7 +23,7 @@ services:
         #    - DISPLAY=unix$DISPLAY \ # pass the display
         external_links:
         #    - homesteaddocker_mariadb_1:mariadb
-            - selenium
+            - selenium_chrome_alone
         links:
              - mariadb
     mariadb:
@@ -35,8 +35,3 @@ services:
             MARIADB_PASS: root
         volumes:
             - /home/andy/work/fh/apps/volumes/mysql:/var/lib/mysql # database files
-    selenium:
-        image: selenium/standalone-chrome-debug
-        build: ./wl3Selenium
-        ports:
-            -5900:32772
